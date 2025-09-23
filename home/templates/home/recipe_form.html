@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Easy Cookie Admin</title>
+  <link rel="stylesheet" href="{% static 'home/admin.css' %}">
+</head>
+<body>
+  <div class="admin-container">
+    <h2>{{ title }}</h2>
+    <form method="post" enctype="multipart/form-data" class="admin-form">
+      {% csrf_token %}
+      <input type="text" name="name" placeholder="ชื่อเมนู" value="{{ recipe.name|default:'' }}" required>
+      <select name="category" required>
+        <option value="">เลือกประเภท</option>
+        <option value="ต้ม" {% if recipe.category == 'ต้ม' %}selected{% endif %}>ต้ม</option>
+        <option value="ผัด" {% if recipe.category == 'ผัด' %}selected{% endif %}>ผัด</option>
+        <option value="ทอด" {% if recipe.category == 'ทอด' %}selected{% endif %}>ทอด</option>
+        <option value="ของหวาน" {% if recipe.category == 'ของหวาน' %}selected{% endif %}>ของหวาน</option>
+      </select>
+      <input type="file" name="image" accept="image/*">
+      <textarea name="ingredients" placeholder="วัตถุดิบ" required>{{ recipe.ingredients|default:'' }}</textarea>
+      <textarea name="instructions" placeholder="วิธีทำ" required>{{ recipe.instructions|default:'' }}</textarea>
+      <button type="submit" class="admin-btn save">บันทึก</button>
+      <a href="{% url 'admin_recipes' %}" class="admin-btn cancel">ยกเลิก</a>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบแอดมิน - Easy Cookie</title>
+  <link rel="stylesheet" href="{% static 'home/admin.css' %}">
+</head>
+<body>
+  <div class="admin-login-container">
+    <h2>เข้าสู่ระบบแอดมิน</h2>
+    <form method="post" class="admin-login-form">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="ชื่อผู้ใช้หรืออีเมล" required>
+      <input type="password" name="password" placeholder="รหัสผ่าน" required>
+      <button type="submit" class="admin-btn save">เข้าสู่ระบบ</button>
+      {% if messages %}
+        <div class="admin-error">
+          {% for message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </form>
+  </div>
+</body>
+</html>

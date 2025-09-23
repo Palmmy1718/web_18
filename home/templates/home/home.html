@@ -1,0 +1,574 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easy Cookie - หน้าแรก</title>
+  <link rel="stylesheet" href="{% static 'home/home.css' %}">
+</head>
+<body>
+  <header class="header">
+    <div class="logo-container">
+      <img src="{% static 'home/images/logo.png' %}" alt="Easy Cookie Logo" class="logo">
+    </div>
+    <div class="title-container">
+      <h1 class="site-title">Easy Cookie</h1>
+    </div>
+    <nav class="nav">
+    <span class="nav-home">หน้าแรก</span>
+    <a href="{% url 'register' %}" class="nav-login">สมัครสมาชิก</a>
+    <a href="{% url 'login' %}" class="nav-login">เข้าสู่ระบบ</a>
+    <a href="{% url 'admin_login' %}" class="admin-nav-btn">แอดมิน</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="search-section">
+  <input type="text" class="search-input" placeholder="ค้นหาสูตรอาหาร" id="searchBox">
+      <select class="category-select">
+  <option>ทุกประเภท</option>
+  <option>ประเภทต้ม</option>
+  <option>ประเภทผัด</option>
+  <option>ประเภททอด</option>
+  <option>ประเภทของหวาน</option>
+      </select>
+    </section>
+
+    <section class="recipes-section">
+      <div class="recipe-card" data-type="ต้ม">
+        <img src="{% static 'home/images/f2.jpg' %}" alt="ต้มจืด" class="recipe-img" onclick="openModal('tomjood-modal')">
+        <div class="recipe-info">
+          <h2>ต้มจืด</h2>
+          <span class="recipe-type">ประเภทต้ม</span>
+        </div>
+      </div>
+      <!-- Modal for ต้มจืด -->
+      <div id="tomjood-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('tomjood-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/f2.jpg' %}" alt="ต้มจืด" class="modal-img">
+            <h2>ต้มจืด</h2>
+            <span class="recipe-type">ประเภทต้ม</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>น้ำซุป 500 มล.</li>
+              <li>หมูสับ 100 กรัม</li>
+              <li>เต้าหู้ไข่ 1 หลอด</li>
+              <li>แครอท 1/2 หัว</li>
+              <li>กะหล่ำปลี 3 ใบ</li>
+              <li>ขึ้นฉ่าย 2 ต้น</li>
+              <li>ซีอิ๊วขาว 1 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ต้มน้ำซุปให้เดือด ใส่หมูสับปั้นเป็นก้อนลงไป</li>
+              <li>ใส่เต้าหู้ไข่ แครอท กะหล่ำปลี</li>
+              <li>ปรุงรสด้วยซีอิ๊วขาว</li>
+              <li>ใส่ขึ้นฉ่ายก่อนปิดไฟ</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ต้ม">
+        <img src="{% static 'home/images/t1.jpg' %}" alt="ต้มยำกุ้ง" class="recipe-img" onclick="openModal('tomyam-modal')">
+        <div class="recipe-info">
+          <h2>ต้มยำกุ้ง</h2>
+          <span class="recipe-type">ประเภทต้ม</span>
+        </div>
+      </div>
+      <!-- Modal for ต้มยำกุ้ง -->
+      <div id="tomyam-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('tomyam-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/t1.jpg' %}" alt="ต้มยำกุ้ง" class="recipe-img" onclick="openModal('padkrapao-modal')">
+            <h2>ต้มยำกุ้ง</h2>
+            <span class="recipe-type">ประเภทต้ม</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>กุ้งสด 200 กรัม</li>
+              <li>เห็ดฟาง 100 กรัม</li>
+              <li>ข่า 2 แว่น</li>
+              <li>ตะไคร้ 1 ต้น</li>
+              <li>ใบมะกรูด 3 ใบ</li>
+              <li>พริกขี้หนู 5 เม็ด</li>
+              <li>น้ำปลา 2 ช้อนโต๊ะ</li>
+              <li>น้ำมะนาว 2 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ต้มน้ำ ใส่ข่า ตะไคร้ ใบมะกรูด</li>
+              <li>ใส่เห็ดฟาง กุ้งสด</li>
+              <li>ปรุงรสด้วยน้ำปลา น้ำมะนาว พริกขี้หนู</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ต้ม">
+        <img src="{% static 'home/images/t2.png' %}" alt="ต้มข่าไก่" class="recipe-img" onclick="openModal('tomkagai-modal')">
+        <div class="recipe-info">
+          <h2>ต้มข่าไก่</h2>
+          <span class="recipe-type">ประเภทต้ม</span>
+        </div>
+      </div>
+      <!-- Modal for ต้มข่าไก่ -->
+      <div id="tomkagai-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('tomkagai-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/t2.jpg' %}" alt="ต้มข่าไก่" class="recipe-img" onclick="openModal('padkrapao-modal')">
+            <h2>ต้มข่าไก่</h2>
+            <span class="recipe-type">ประเภทต้ม</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>เนื้อไก่ 150 กรัม</li>
+              <li>เห็ดฟาง 50 กรัม</li>
+              <li>ข่า 3 แว่น</li>
+              <li>ตะไคร้ 1 ต้น</li>
+              <li>ใบมะกรูด 2 ใบ</li>
+              <li>กะทิ 200 มล.</li>
+              <li>น้ำปลา 1 ช้อนโต๊ะ</li>
+              <li>น้ำมะนาว 1 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ต้มน้ำ ใส่ข่า ตะไคร้ ใบมะกรูด</li>
+              <li>ใส่เนื้อไก่ เห็ดฟาง</li>
+              <li>เติมกะทิ ปรุงรสด้วยน้ำปลา น้ำมะนาว</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for ต้มจืด -->
+      <div id="tomjood-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('tomjood-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/f2.jpg' %}" alt="ต้มจืด" class="recipe-img" onclick="openModal('padkrapao-modal')">
+            <span class="recipe-type">ประเภทต้ม</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>น้ำซุป 500 มล.</li>
+              <li>หมูสับ 100 กรัม</li>
+              <li>เต้าหู้ไข่ 1 หลอด</li>
+              <li>แครอท 1/2 หัว</li>
+              <li>กะหล่ำปลี 3 ใบ</li>
+              <li>ขึ้นฉ่าย 2 ต้น</li>
+              <li>ซีอิ๊วขาว 1 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ต้มน้ำซุปให้เดือด ใส่หมูสับปั้นเป็นก้อนลงไป</li>
+              <li>ใส่เต้าหู้ไข่ แครอท กะหล่ำปลี</li>
+              <li>ปรุงรสด้วยซีอิ๊วขาว</li>
+              <li>ใส่ขึ้นฉ่ายก่อนปิดไฟ</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="recipe-card" data-type="ผัด">
+        <img src="{% static 'home/images/f3.jpg' %}" alt="ผัดเปรี้ยวหวาน" class="recipe-img" onclick="openModal('padpriewwan-modal')">
+        <div class="recipe-info">
+          <h2>ผัดเปรี้ยวหวาน</h2>
+          <span class="recipe-type">ประเภทผัด</span>
+        </div>
+      </div>
+      <!-- Modal for ผัดเปรี้ยวหวาน -->
+      <div id="padpriewwan-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('padpriewwan-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/f3.jpg' %}" alt="ผัดเปรี้ยวหวาน" class="modal-img">
+            <h2>ผัดเปรี้ยวหวาน</h2>
+            <span class="recipe-type">ประเภทผัด</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>หมู 200 กรัม</li>
+              <li>สับปะรด 1/2 ผล</li>
+              <li>มะเขือเทศ 2 ลูก</li>
+              <li>พริกหวาน 1 ลูก</li>
+              <li>แตงกวา 1 ลูก</li>
+              <li>ซอสมะเขือเทศ 2 ช้อนโต๊ะ</li>
+              <li>น้ำปลา 1 ช้อนโต๊ะ</li>
+              <li>น้ำตาล 1 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ผัดหมูให้สุก ใส่ผักทั้งหมดลงไป</li>
+              <li>ปรุงรสด้วยซอสมะเขือเทศ น้ำปลา น้ำตาล</li>
+              <li>ผัดจนผักสุกและน้ำงวด</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ผัด">
+        <img src="{% static 'home/images/p1.jpg' %}" alt="ผัดมาม่า" class="recipe-img" onclick="openModal('padmama-modal')">
+        <div class="recipe-info">
+          <h2>ผัดมาม่า</h2>
+          <span class="recipe-type">ประเภทผัด</span>
+        </div>
+      </div>
+      <!-- Modal for ผัดมาม่า -->
+      <div id="padmama-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('padmama-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/p1.jpg' %}" alt="ผัดมาม่า" class="recipe-img" onclick="openModal('padmama-modal')">
+            <span class="recipe-type">ประเภทผัด</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>บะหมี่กึ่งสำเร็จรูป 1 ซอง</li>
+              <li>ไข่ไก่ 1 ฟอง</li>
+              <li>กะหล่ำปลี 1/2 หัว</li>
+              <li>แครอท 1/3 หัว</li>
+              <li>น้ำมันพืช 1 ช้อนโต๊ะ</li>
+              <li>ซอสปรุงรส 1 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ต้มบะหมี่ให้สุก พักไว้</li>
+              <li>ผัดไข่ในกระทะ ใส่ผักทั้งหมดลงไป</li>
+              <li>ใส่บะหมี่ลงผัด ปรุงรสด้วยซอส</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ผัด">
+        <img src="{% static 'home/images/p2.jpg' %}" alt="ผัดกะเพรา"
+     class="recipe-img" onclick="openModal('padkrapao-modal')">
+        <div class="recipe-info">
+          <h2>ผัดกะเพรา</h2>
+          <span class="recipe-type">ประเภทผัด</span>
+        </div>
+      </div>
+      <!-- Modal for ผัดกะเพรา -->
+      <div id="padkrapao-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('padkrapao-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/p2.jpg' %}" alt="ผัดกะเพรา"
+     class="recipe-img" onclick="openModal('padkrapao-modal')">
+            <span class="recipe-type">ประเภทผัด</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>หมูสับ 200 กรัม</li>
+              <li>ใบกะเพรา 1 กำมือ</li>
+              <li>พริกแดง 5 เม็ด</li>
+              <li>กระเทียม 3 กลีบ</li>
+              <li>น้ำมันพืช 1 ช้อนโต๊ะ</li>
+              <li>น้ำปลา 1 ช้อนโต๊ะ</li>
+              <li>น้ำตาล 1/2 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ผัดกระเทียมและพริกในน้ำมัน</li>
+              <li>ใส่หมูสับลงผัดจนสุก</li>
+              <li>ปรุงรสด้วยน้ำปลา น้ำตาล</li>
+              <li>ใส่ใบกะเพราผัดเร็ว ๆ แล้วปิดไฟ</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="recipe-card" data-type="ทอด">
+        <img src="{% static 'home/images/f1.jpg' %}" alt="ปลากะพงทอด" class="recipe-img" onclick="openModal('plakaphongtod-modal')">
+        <div class="recipe-info">
+          <h2>ปลากะพงทอด</h2>
+          <span class="recipe-type">ประเภททอด</span>
+        </div>
+      </div>
+      <!-- Modal for ปลากะพงทอด -->
+      <div id="plakaphongtod-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('plakaphongtod-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/f1.jpg' %}" alt="ปลากะพงทอด" class="modal-img">
+            <h2>ปลากะพงทอด</h2>
+            <span class="recipe-type">ประเภททอด</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>ปลากะพง 1 ตัว</li>
+              <li>น้ำมันพืชสำหรับทอด</li>
+              <li>มะม่วงดิบ 1 ลูก</li>
+              <li>หอมแดง 2 หัว</li>
+              <li>พริกขี้หนู 5 เม็ด</li>
+              <li>น้ำปลา 2 ช้อนโต๊ะ</li>
+              <li>น้ำตาล 1 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>แล่ปลากะพงและทอดจนกรอบ</li>
+              <li>ทำน้ำยำโดยผสมมะม่วง หอมแดง พริก น้ำปลา น้ำตาล</li>
+              <li>ราดน้ำยำบนปลาทอด</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ทอด">
+        <img src="{% static 'home/images/s1.jpg' %}" alt="ไก่ทอดน้ำปลา" class="recipe-img" onclick="openModal('friedchicken-modal')">
+        <div class="recipe-info">
+          <h2>ไก่ทอดน้ำปลา</h2>
+          <span class="recipe-type">ประเภททอด</span>
+        </div>
+      </div>
+      <!-- Modal for ไก่ทอดน้ำปลา -->
+      <div id="friedchicken-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('friedchicken-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/s1.jpg' %}" alt="ไก่ทอดน้ำปลา" class="modal-img">
+            <h2>ไก่ทอดน้ำปลา</h2>
+            <span class="recipe-type">ประเภททอด</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>ปีกไก่ 500 กรัม</li>
+              <li>น้ำปลา 3 ช้อนโต๊ะ</li>
+              <li>น้ำมันพืชสำหรับทอด</li>
+              <li>แป้งทอดกรอบ 2 ช้อนโต๊ะ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>หมักปีกไก่กับน้ำปลา 30 นาที</li>
+              <li>คลุกแป้งทอดกรอบให้ทั่ว</li>
+              <li>ทอดในน้ำมันร้อนจนกรอบ</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ทอด">
+        <img src="{% static 'home/images/s2.jpg' %}" alt="หมูทอดกระเทียม" class="recipe-img" onclick="openModal('friedpork-modal')">
+        <div class="recipe-info">
+          <h2>หมูทอดกระเทียม</h2>
+          <span class="recipe-type">ประเภททอด</span>
+        </div>
+      </div>
+      <!-- Modal for หมูทอดกระเทียม -->
+      <div id="friedpork-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('friedpork-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/s2.jpg' %}" alt="หมูทอดกระเทียม" class="modal-img">
+            <h2>หมูทอดกระเทียม</h2>
+            <span class="recipe-type">ประเภททอด</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>หมูสามชั้น 300 กรัม</li>
+              <li>กระเทียมสับ 2 ช้อนโต๊ะ</li>
+              <li>ซีอิ๊วขาว 1 ช้อนโต๊ะ</li>
+              <li>น้ำมันพืชสำหรับทอด</li>
+              <li>พริกไทย 1/2 ช้อนชา</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>หมักหมูสามชั้นกับกระเทียม ซีอิ๊วขาว พริกไทย 20 นาที</li>
+              <li>ทอดในน้ำมันร้อนจนกรอบ</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ของหวาน">
+        <img src="{% static 'home/images/f5.jpg' %}" alt="บัวลอย" class="recipe-img" onclick="openModal('bualoy-modal')">
+        <div class="recipe-info">
+          <h2>บัวลอย</h2>
+          <span class="recipe-type sweet">ประเภทของหวาน</span>
+        </div>
+      </div>
+      <!-- Modal for บัวลอย -->
+      <div id="bualoy-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('bualoy-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/f5.jpg' %}" alt="บัวลอย" class="modal-img">
+            <h2>บัวลอย</h2>
+            <span class="recipe-type sweet">ประเภทของหวาน</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>แป้งข้าวเหนียว 200 กรัม</li>
+              <li>น้ำเปล่า 100 มล.</li>
+              <li>เผือก/ฟักทอง/มันม่วง (หั่นเต๋า)</li>
+              <li>กะทิ 250 มล.</li>
+              <li>น้ำตาล 3 ช้อนโต๊ะ</li>
+              <li>เกลือ 1/2 ช้อนชา</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ผสมแป้งกับน้ำ ปั้นเป็นก้อนเล็ก ๆ</li>
+              <li>ต้มบัวลอยจนลอยขึ้น</li>
+              <li>ต้มกะทิ น้ำตาล เกลือให้เดือด</li>
+              <li>ใส่บัวลอยและเผือก/ฟักทอง/มันม่วงลงไป</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ของหวาน">
+        <img src="{% static 'home/images/w2.jpg' %}" alt="ขนมชั้น" class="recipe-img" onclick="openModal('kanomchan-modal')">
+        <div class="recipe-info">
+          <h2>ขนมชั้น</h2>
+          <span class="recipe-type sweet">ประเภทของหวาน</span>
+        </div>
+      </div>
+      <!-- Modal for ขนมชั้น -->
+      <div id="kanomchan-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('kanomchan-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/w2.jpg' %}" alt="ขนมชั้น" class="modal-img">
+            <h2>ขนมชั้น</h2>
+            <span class="recipe-type sweet">ประเภทของหวาน</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>แป้งข้าวเจ้า 100 กรัม</li>
+              <li>แป้งมัน 100 กรัม</li>
+              <li>แป้งท้าวยายม่อม 50 กรัม</li>
+              <li>น้ำตาล 250 กรัม</li>
+              <li>กะทิ 400 มล.</li>
+              <li>น้ำใบเตยคั้น 100 มล.</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ผสมแป้งทุกชนิดกับน้ำตาล กะทิ และน้ำใบเตย</li>
+              <li>กรองส่วนผสมให้เนียน</li>
+              <li>เทใส่ถาดทีละชั้น นึ่งทีละชั้นจนหมด</li>
+              <li>พักให้เย็นแล้วตัดเป็นชิ้น</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="recipe-card" data-type="ของหวาน">
+        <img src="{% static 'home/images/w1.jpg' %}" alt="ขนมถ้วยฟู" class="recipe-img" onclick="openModal('kanomtuayfoo-modal')">
+        <div class="recipe-info">
+          <h2>ขนมถ้วยฟู</h2>
+          <span class="recipe-type sweet">ประเภทของหวาน</span>
+        </div>
+      </div>
+      <!-- Modal for ขนมถ้วยฟู -->
+      <div id="kanomtuayfoo-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('kanomtuayfoo-modal')">&times;</span>
+          <div class="modal-header">
+            <img src="{% static 'home/images/w1.jpg' %}" alt="ขนมถ้วยฟู" class="modal-img">
+            <h2>ขนมถ้วยฟู</h2>
+            <span class="recipe-type sweet">ประเภทของหวาน</span>
+          </div>
+          <div class="modal-section">
+            <h3>วัตถุดิบ</h3>
+            <ul>
+              <li>แป้งข้าวเจ้า 200 กรัม</li>
+              <li>แป้งสาลี 50 กรัม</li>
+              <li>น้ำตาล 200 กรัม</li>
+              <li>ผงฟู 2 ช้อนชา</li>
+              <li>กะทิ 200 มล.</li>
+              <li>สีผสมอาหารตามชอบ</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h3>วิธีทำ</h3>
+            <ol>
+              <li>ผสมแป้งข้าวเจ้า แป้งสาลี น้ำตาล ผงฟู กะทิ</li>
+              <li>แบ่งใส่สีผสมอาหารตามชอบ</li>
+              <li>เทใส่ถ้วย นึ่งไฟแรงจนฟู</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    function openModal(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    window.onclick = function(event) {
+      ['tomjood-modal','tomyam-modal','tomkagai-modal','padpriewwan-modal','padmama-modal','padkrapao-modal','plakaphongtod-modal','friedchicken-modal','friedpork-modal','bualoy-modal','kanomchan-modal','kanomtuayfoo-modal'].forEach(function(id) {
+        var modal = document.getElementById(id);
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      });
+    }
+
+    // Filter recipes by category
+    document.addEventListener('DOMContentLoaded', function() {
+      var select = document.querySelector('.category-select');
+      var searchBox = document.getElementById('searchBox');
+
+      function filterRecipes() {
+        var value = select.value.replace('ประเภท', '').trim();
+        var search = searchBox.value.trim().toLowerCase();
+        document.querySelectorAll('.recipe-card').forEach(function(card) {
+          var type = card.getAttribute('data-type');
+          var title = card.querySelector('h2').textContent.toLowerCase();
+          var showType = (select.value === 'ทุกประเภท' || value === '' || select.selectedIndex === 0 || type === value);
+          var showSearch = (search === '' || title.includes(search));
+          if (showType && showSearch) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      select.addEventListener('change', filterRecipes);
+      searchBox.addEventListener('input', filterRecipes);
+
+      // รีเซ็ตการแสดงผลเมื่อโหลดหน้าใหม่หรือ dropdown ถูก set เป็น 'ทุกประเภท'
+      select.selectedIndex = 0;
+      filterRecipes();
+    });
+  </script>
+</body>
+</html>

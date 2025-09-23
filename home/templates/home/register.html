@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สมัครสมาชิก - Easy Cookie</title>
+  <link rel="stylesheet" href="{% static 'home/auth.css' %}">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>สมัครสมาชิก</h2>
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
+      <input type="email" name="email" placeholder="อีเมล" required>
+      <input type="password" name="password1" placeholder="รหัสผ่าน" required>
+      <input type="password" name="password2" placeholder="ยืนยันรหัสผ่าน" required>
+      <button type="submit" class="auth-btn">สมัครสมาชิก</button>
+      <p class="auth-link">มีบัญชีแล้ว? <a href="{% url 'login' %}">เข้าสู่ระบบ</a></p>
+    </form>
+  </div>
+</body>
+</html>
