@@ -40,8 +40,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'my_site.wsgi.application'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'recipe_project_db',     # <<-- ชื่อ DB ที่คุณสร้างในขั้นตอนที่ 1
+        'USER': 'postgres',                # <<-- ชื่อ User ของ PostgreSQL (ถ้าไม่ได้เปลี่ยนก็ใช้ postgres)
+        'PASSWORD': 'pakaporn288',       # <<-- รหัสผ่านที่คุณตั้งไว้ตอนติดตั้ง PostgreSQL
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 AUTH_PASSWORD_VALIDATORS = [
