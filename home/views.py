@@ -93,7 +93,6 @@ def register(request):
     return render(request, "home/register.html")
 
 def login_view(request):
-    """ฟังก์ชันสำหรับหน้า Login (จัดการทั้ง Admin และ User)"""
     if request.method == 'POST':
         user_input = request.POST.get("username")
         passw = request.POST.get("password")
@@ -128,7 +127,6 @@ def logout_view(request):
 # ---------- ฟังก์ชันสำหรับสมาชิกที่ Login แล้ว ----------
 @login_required(login_url='login')
 def user_add_recipe(request):
-    """ฟังก์ชันสำหรับให้ User ทั่วไปเพิ่มสูตรอาหาร"""
     if request.method == "POST":
         name = request.POST.get("name")
         category_id = request.POST.get("category")
@@ -159,7 +157,6 @@ def user_add_recipe(request):
 # ---------- ส่วนจัดการของ Admin ----------
 @admin_required
 def admin_recipes(request):
-    """หน้าแสดงรายการอาหารทั้งหมดสำหรับ Admin"""
     all_recipes = Recipe.objects.all().order_by('-created_at')
     recipe_count = all_recipes.count()
     # Prepare category data for chart
