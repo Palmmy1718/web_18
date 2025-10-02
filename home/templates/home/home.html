@@ -19,9 +19,9 @@
     <nav class="nav">
       {% if user.is_authenticated %}
         <span class="nav-home">สวัสดี, {{ user.username }}</span>
+  <a href="{% url 'user_recipes' %}" class="nav-btn nav-myrecipes" style="background: linear-gradient(90deg, #ffb347 0%, #ffcc80 100%); color: #fff; font-weight: 600; border-radius: 24px; padding: 8px 22px; margin-right: 8px; box-shadow: 0 2px 8px rgba(255,179,71,0.12); text-decoration: none; transition: background 0.2s;">สูตรของฉัน</a>
         <a href="{% url 'user_add_recipe' %}" class="nav-btn nav-add">เพิ่มสูตรอาหาร</a>
         <a href="{% url 'logout' %}" class="nav-btn nav-logout">ออกจากระบบ</a>
-      
       {% else %}
         <span class="nav-home">หน้าแรก</span>
         <a href="{% url 'register' %}" class="nav-btn nav-register">สมัครสมาชิก</a>
@@ -42,55 +42,89 @@
       </select>
     </section>
 
-    <section class="recipe-grid">
+    <section class="recipe-grid" style="display: flex; flex-wrap: wrap; gap: 32px; justify-content: center;">
       {% for recipe in recipes %}
-        <div class="recipe-card" data-type="{{ recipe.category.name }}">
+        {% if forloop.counter0|divisibleby:3 and not forloop.first %}
+          </div><div class="recipe-row" style="display: flex; gap: 32px; justify-content: center; width: 100%; margin-bottom: 24px;">
+        {% elif forloop.first %}
+          <div class="recipe-row" style="display: flex; gap: 32px; justify-content: center; width: 100%; margin-bottom: 24px;">
+        {% endif %}
+        <div class="recipe-card" data-type="{{ recipe.category.name }}" style="background: #fff; border-radius: 18px; box-shadow: 0 2px 12px rgba(210,105,30,0.08); width: 320px; padding: 0 0 18px 0; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: box-shadow 0.2s;" onclick="showRecipeModal({{ recipe.id }})">
           {% if recipe.image %}
-            <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}">
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 18px 18px 0 0;">
           {% else %}
-            <div class="recipe-img-placeholder"></div>
+            <div class="recipe-img-placeholder" style="width: 100%; height: 180px; background: #ffe4c4; border-radius: 18px 18px 0 0;"></div>
           {% endif %}
-          <div class="recipe-info">
-            <h2>{{ recipe.name }}</h2>
-            <p class="recipe-category">{{ recipe.category.name }}</p>
-            <p class="recipe-creator">โดย: {{ recipe.creator.username }}</p>
+          <div class="recipe-info" style="width: 90%; margin-top: 12px; text-align: center;">
+            <h2 style="font-size: 1.3rem; color: #d2691e; margin-bottom: 6px; font-weight: 600;">{{ recipe.name }}</h2>
+            <p class="recipe-category" style="color: #ffb347; font-weight: 500; margin-bottom: 4px;">{{ recipe.category.name }}</p>
+            <p class="recipe-creator" style="color: #888; font-size: 0.95rem;">โดย: {{ recipe.creator.username }}</p>
           </div>
         </div>
+        {% if forloop.last %}</div>{% endif %}
       {% empty %}
         <p style="text-align: center; width: 100%;">ยังไม่มีสูตรอาหารในระบบ</p>
       {% endfor %}
     </section>
+
+    <!-- Modal for recipe details -->
+    <div id="recipeModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:9999; justify-content:center; align-items:center;">
+      <div id="modalContent" style="background:#fff; border-radius:20px; box-shadow:0 4px 24px rgba(210,105,30,0.18); max-width:420px; width:90vw; padding:32px 24px; position:relative; max-height:80vh; overflow-y:auto;">
+        <span onclick="closeRecipeModal()" style="position:absolute; top:18px; right:18px; font-size:1.8rem; color:#d2691e; cursor:pointer;">&times;</span>
+        <div id="modalBody"></div>
+      </div>
+    </div>
   </main>
 
   <script>
-    // (JavaScript ของคุณคงไว้เหมือนเดิม)
     document.addEventListener('DOMContentLoaded', function() {
       const searchBox = document.getElementById('searchBox');
       const categorySelect = document.querySelector('.category-select');
-      const recipeCards = document.querySelectorAll('.recipe-card');
-
       function filterAndSearch() {
         const searchTerm = searchBox.value.toLowerCase();
         const selectedCategory = categorySelect.value;
-
-        recipeCards.forEach(card => {
+        document.querySelectorAll('.recipe-card').forEach(card => {
           const recipeName = card.querySelector('h2').textContent.toLowerCase();
           const recipeCategory = card.dataset.type;
-
           const nameMatch = recipeName.includes(searchTerm);
           const categoryMatch = (selectedCategory === 'ทุกประเภท' || recipeCategory === selectedCategory);
-
-          if (nameMatch && categoryMatch) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
+          card.style.display = (nameMatch && categoryMatch) ? 'flex' : 'none';
         });
       }
-
       searchBox.addEventListener('input', filterAndSearch);
       categorySelect.addEventListener('change', filterAndSearch);
     });
+
+    // Modal logic
+    const recipesData = {
+      {% for recipe in recipes %}
+        {{ recipe.id }}: {
+          name: "{{ recipe.name|escapejs }}",
+          category: "{{ recipe.category.name|escapejs }}",
+          creator: "{{ recipe.creator.username|escapejs }}",
+          ingredients: `{{ recipe.ingredients|linebreaksbr|escapejs }}`,
+          instructions: `{{ recipe.instructions|linebreaksbr|escapejs }}`,
+          image: "{% if recipe.image %}{{ recipe.image.url }}{% endif %}"
+        },
+      {% endfor %}
+    };
+
+    function showRecipeModal(id) {
+      const modal = document.getElementById('recipeModal');
+      const body = document.getElementById('modalBody');
+      const data = recipesData[id];
+      let html = `<h2 style='color:#d2691e; font-size:1.5rem; margin-bottom:10px;'>${data.name}</h2>`;
+      if(data.image) html += `<img src='${data.image}' alt='${data.name}' style='width:100%; height:180px; object-fit:cover; border-radius:12px; margin-bottom:14px;'>`;
+      html += `<p style='color:#ffb347; font-weight:500;'>ประเภท: ${data.category}</p>`;
+      html += `<p style='color:#888;'>โดย: ${data.creator}</p>`;
+      html += `<h3 style='margin-top:18px; font-size:1.1rem;'>วัตถุดิบ</h3><div style='color:#444; font-size:1rem; margin-bottom:10px;'>${data.ingredients}</div>`;
+      html += `<h3 style='margin-top:10px; font-size:1.1rem;'>วิธีทำ</h3><div style='color:#444; font-size:1rem;'>${data.instructions}</div>`;
+      body.innerHTML = html;
+      modal.style.display = 'flex';
+    }
+    function closeRecipeModal() {
+      document.getElementById('recipeModal').style.display = 'none';
+    }
   </script>
 </body>
 </html>

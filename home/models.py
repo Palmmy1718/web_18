@@ -10,10 +10,9 @@ class Category(models.Model):
 
 class Recipe(models.Model):
     name = models.CharField(max_length=200)
-    # --- ส่วนที่เปลี่ยนแปลง ---
     ingredients = models.TextField()
     instructions = models.TextField()
-    # -------------------------
+    view_count = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='recipe_images/', null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)

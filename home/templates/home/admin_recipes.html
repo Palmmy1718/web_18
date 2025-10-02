@@ -6,15 +6,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>จัดการเมนูอาหาร</title>
   <link rel="stylesheet" href="{% static 'home/admin.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="admin-container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>จัดการเมนูอาหาร</h2>
-        <h3 style="margin: 0;">เมนูในระบบทั้งหมด: {{ recipe_count }} รายการ</h3>
+  <div style="display: flex; background: #f8f6f2;">
+    <main style="flex: 1; padding: 40px 48px; max-width: 1200px; margin: 0 auto;">
+      <h2 style="font-size: 2.2rem; color: #ff9800; font-weight: 700; margin-bottom: 32px; text-align:left;">จัดการเมนูอาหาร</h2>
+      <div style="display: flex; flex-direction: row; gap: 32px; margin-bottom: 40px; align-items: stretch;">
+        <!-- Chart in left box -->
+        <div style="background: #fff8f0; border-radius: 18px; box-shadow: 0 2px 12px rgba(210,105,30,0.10); padding: 32px 32px 18px 32px; border: 2px solid #ffb347; min-width: 340px; max-width: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 400px;">
+          <span style="font-size: 1.3rem; color: #d2691e; font-weight: 700; margin-bottom: 18px;">สัดส่วนเมนูแต่ละประเภทในระบบ</span>
+          <canvas id="categoryChart" width="260" height="260" style="max-width:260px; max-height:260px; margin-bottom: 8px;"></canvas>
+        </div>
+        <!-- Summary card next to chart -->
+        <div style="background: #fff8f0; border-radius: 18px; box-shadow: 0 2px 12px rgba(210,105,30,0.10); padding: 24px 32px; border: 2px solid #ffb347; min-width: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span style="font-size: 2.2rem; color: #d2691e; margin-bottom: 8px;">🍽️</span>
+          <div style="font-size: 1.1rem; color: #333; margin-bottom: 6px; font-weight: 600;">เมนูในระบบทั้งหมด</div>
+          <div style="font-size: 2.1rem; color: #d2691e; font-weight: 700;">{{ recipe_count }}</div>
+        </div>
+      </div>
+      <!-- ...existing messages and table... -->
+    </main>
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const categoryLabels = {{ category_labels|safe }};
+    const categoryCounts = {{ category_counts|safe }};
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: categoryLabels,
+        datasets: [{
+          data: categoryCounts,
+          backgroundColor: [
+            '#ffb347', '#ffcc80', '#d2691e', '#ffe4c4', '#ff7043', '#81c784', '#64b5f6', '#ba68c8', '#ffd54f', '#90caf9'
+          ],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#d2691e', font: { size: 14 } }
+          }
+        }
+      }
+    });
+  });
+</script>
+      </div>
     </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; margin-top: 10px;">
       <a href="{% url 'add_recipe' %}" class="admin-btn add">+ เพิ่มเมนูอาหาร</a>
       <a href="{% url 'logout' %}" class="admin-btn logout">ออกจากระบบ</a>
     </div>
@@ -30,10 +74,11 @@
     <table class="admin-table">
       <thead>
         <tr>
-          <th>รูป</th>
-          <th>ชื่อเมนู</th>
-          <th>ประเภท</th>
-          <th>ผู้สร้าง</th> <th>รายละเอียด</th>
+         <th>รูป</th>
+         <th>ชื่อเมนู</th>
+         <th>ประเภท</th>
+         <th>ผู้สร้าง</th>
+          <th>ยอดเข้าชม</th>
           <th>แก้ไข</th>
           <th>ลบ</th>
         </tr>
@@ -50,7 +95,8 @@
           </td>
           <td>{{ recipe.name }}</td>
           <td>{{ recipe.category.name }}</td>
-          <td>{{ recipe.creator.username }}</td> <td>{{ recipe.description|truncatechars:40 }}</td>
+          <td>{{ recipe.creator.username }}</td>
+          <td>{{ recipe.view_count }}</td>
           <td><a href="{% url 'edit_recipe' recipe.id %}" class="admin-btn edit">แก้ไข</a></td>
           <td>
             <a href="{% url 'delete_recipe' recipe.id %}" class="admin-btn delete"

@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>สูตรอาหารของฉัน - Easy Cookie</title>
+  <link rel="stylesheet" href="{% static 'home/home.css' %}">
+</head>
+<body>
+  <header class="header" style="display: flex; flex-direction: column; align-items: center; background: #fff8f0; padding-bottom: 12px; border-radius: 0 0 16px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+    <div style="width: 100%; display: flex; align-items: center; justify-content: center; position: relative;">
+      <a href="{% url 'home' %}" style="position: absolute; left: 24px; top: 50%; transform: translateY(-50%); text-decoration: none; background: none; border: none; cursor: pointer;">
+        <span style="font-size: 2rem; color: #d2691e; vertical-align: middle;">&#8592;</span>
+      </a>
+      <h2 style="margin: 24px 0 12px 0; text-align:center; color: #d2691e; font-size: 2.2rem; font-weight: 700; letter-spacing: 1px;">สูตรอาหารของฉัน</h2>
+    </div>
+  </header>
+  <main>
+    <section class="recipe-grid" style="display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; margin-top: 16px;">
+      {% for recipe in recipes %}
+        <div class="recipe-card" data-type="{{ recipe.category.name }}" style="background: #fff; border-radius: 18px; box-shadow: 0 2px 12px rgba(210,105,30,0.08); width: 320px; padding: 0 0 18px 0; display: flex; flex-direction: column; align-items: center; transition: box-shadow 0.2s; cursor:pointer;" onclick="showRecipeModal({{ recipe.id }})">
+          {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 18px 18px 0 0;">
+          {% else %}
+            <div class="recipe-img-placeholder" style="width: 100%; height: 180px; background: #ffe4c4; border-radius: 18px 18px 0 0;"></div>
+          {% endif %}
+          <div class="recipe-info" style="width: 90%; margin-top: 12px; text-align: center;">
+            <h2 style="font-size: 1.3rem; color: #d2691e; margin-bottom: 6px; font-weight: 600;">{{ recipe.name }}</h2>
+            <p class="recipe-category" style="color: #ffb347; font-weight: 500; margin-bottom: 4px;">{{ recipe.category.name }}</p>
+            <div style="margin-top:12px; display: flex; justify-content: center; gap: 12px;">
+              <a href="{% url 'user_edit_recipe' recipe.id %}" class="nav-btn nav-edit" style="background: #4caf50; color: #fff; padding: 7px 18px; border-radius: 20px; font-weight: 500; text-decoration: none; box-shadow: 0 2px 6px rgba(76,175,80,0.10); transition: background 0.2s;" onclick="event.stopPropagation();">แก้ไข</a>
+              <a href="{% url 'user_delete_recipe' recipe.id %}" class="nav-btn nav-delete" style="background: #e53935; color: #fff; padding: 7px 18px; border-radius: 20px; font-weight: 500; text-decoration: none; box-shadow: 0 2px 6px rgba(229,57,53,0.10); transition: background 0.2s;" onclick="event.stopPropagation(); return confirm('ยืนยันการลบ?')">ลบ</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p style="text-align: center; width: 100%; font-size: 1.1rem; color: #d2691e; margin-top: 32px;">คุณยังไม่มีสูตรอาหาร</p>
+      {% endfor %}
+    </section>
+
+    <!-- Modal for recipe details -->
+    <div id="recipeModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:9999; justify-content:center; align-items:center;">
+      <div id="modalContent" style="background:#fff; border-radius:20px; box-shadow:0 4px 24px rgba(210,105,30,0.18); max-width:420px; width:90vw; padding:32px 24px; position:relative;">
+        <span onclick="closeRecipeModal()" style="position:absolute; top:18px; right:18px; font-size:1.8rem; color:#d2691e; cursor:pointer;">&times;</span>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+  </main>
+</body>
+<script>
+  // Prepare recipe data for modal
+  const recipesData = {
+    {% for recipe in recipes %}
+      {{ recipe.id }}: {
+        name: "{{ recipe.name|escapejs }}",
+        category: "{{ recipe.category.name|escapejs }}",
+        ingredients: `{{ recipe.ingredients|linebreaksbr|escapejs }}`,
+        instructions: `{{ recipe.instructions|linebreaksbr|escapejs }}`,
+        image: "{% if recipe.image %}{{ recipe.image.url }}{% endif %}"
+      },
+    {% endfor %}
+  };
+
+  function showRecipeModal(id) {
+    const modal = document.getElementById('recipeModal');
+    const body = document.getElementById('modalBody');
+    const data = recipesData[id];
+    let html = `<h2 style='color:#d2691e; font-size:1.5rem; margin-bottom:10px;'>${data.name}</h2>`;
+    if(data.image) html += `<img src='${data.image}' alt='${data.name}' style='width:100%; height:180px; object-fit:cover; border-radius:12px; margin-bottom:14px;'>`;
+    html += `<p style='color:#ffb347; font-weight:500;'>ประเภท: ${data.category}</p>`;
+    html += `<h3 style='margin-top:18px; font-size:1.1rem;'>วัตถุดิบ</h3><div style='color:#444; font-size:1rem; margin-bottom:10px;'>${data.ingredients}</div>`;
+    html += `<h3 style='margin-top:10px; font-size:1.1rem;'>วิธีทำ</h3><div style='color:#444; font-size:1rem;'>${data.instructions}</div>`;
+    body.innerHTML = html;
+    modal.style.display = 'flex';
+  }
+  function closeRecipeModal() {
+    document.getElementById('recipeModal').style.display = 'none';
+  }
+</script>
+</body>
+</html>
