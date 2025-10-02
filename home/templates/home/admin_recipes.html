@@ -4,24 +4,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>จัดการเมนูอาหาร - Easy Cookie Admin</title>
+  <title>จัดการเมนูอาหาร</title>
   <link rel="stylesheet" href="{% static 'home/admin.css' %}">
 </head>
 <body>
   <div class="admin-container">
-    <h2>จัดการเมนูอาหาร</h2>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-      <a href="{% url 'add_recipe' %}" class="admin-btn add">+ เพิ่มเมนูอาหาร</a>
-      <a href="{% url 'admin_logout' %}" class="admin-btn logout">ออกจากระบบ</a>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>จัดการเมนูอาหาร</h2>
+        <h3 style="margin: 0;">เมนูในระบบทั้งหมด: {{ recipe_count }} รายการ</h3>
     </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; margin-top: 10px;">
+      <a href="{% url 'add_recipe' %}" class="admin-btn add">+ เพิ่มเมนูอาหาร</a>
+      <a href="{% url 'logout' %}" class="admin-btn logout">ออกจากระบบ</a>
+    </div>
+
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <table class="admin-table">
       <thead>
         <tr>
           <th>รูป</th>
           <th>ชื่อเมนู</th>
           <th>ประเภท</th>
-          <th>วัตถุดิบ</th>
-          <th>วิธีทำ</th>
+          <th>ผู้สร้าง</th> <th>รายละเอียด</th>
           <th>แก้ไข</th>
           <th>ลบ</th>
         </tr>
@@ -29,16 +41,26 @@
       <tbody>
         {% for recipe in recipes %}
         <tr>
-          <td>{% if recipe.image %}<img src="{{ recipe.image.url }}" class="admin-img">{% endif %}</td>
+          <td>
+            {% if recipe.image %}
+              <img src="{{ recipe.image.url }}" class="admin-img">
+            {% else %}
+              <div class="admin-img-placeholder">ไม่มีรูป</div>
+            {% endif %}
+          </td>
           <td>{{ recipe.name }}</td>
-          <td>{{ recipe.category }}</td>
-          <td>{{ recipe.ingredients|truncatechars:30 }}</td>
-          <td>{{ recipe.instructions|truncatechars:30 }}</td>
+          <td>{{ recipe.category.name }}</td>
+          <td>{{ recipe.creator.username }}</td> <td>{{ recipe.description|truncatechars:40 }}</td>
           <td><a href="{% url 'edit_recipe' recipe.id %}" class="admin-btn edit">แก้ไข</a></td>
-          <td><a href="{% url 'delete_recipe' recipe.id %}" class="admin-btn delete" onclick="return confirm('ยืนยันการลบ?')">ลบ</a></td>
+          <td>
+            <a href="{% url 'delete_recipe' recipe.id %}" class="admin-btn delete"
+               onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบเมนู {{ recipe.name }}?')">ลบ</a>
+          </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7">ไม่มีเมนูอาหาร</td></tr>
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 20px;">ยังไม่มีเมนูอาหารในระบบ</td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>

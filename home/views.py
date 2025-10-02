@@ -1,154 +1,157 @@
 # home/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.contrib.auth.decorators import user_passes_test
-from .models import Recipe
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Recipe, Category
 
-
-# ---------- Helper ----------
-def _username_from_input(inp: str) -> str:
-    """
-    รับค่าที่ผู้ใช้กรอกมา (อาจเป็นอีเมลหรือยูสเซอร์เนม)
-    ถ้าเป็นอีเมลจะแมปรายการเป็น username ก่อน authenticate
-    """
-    inp = (inp or "").strip()
-    if "@" in inp:
-        User = get_user_model()
-        try:
-            return User.objects.get(email__iexact=inp).username
-        except User.DoesNotExist:
-            return inp  # เผื่อกรณีตั้ง username = อีเมล
-    return inp
-
-
+# ---------- Helper Decorator ----------
 def admin_required(view_func):
-    """ต้องเป็นผู้ใช้ที่ล็อกอินแล้ว และเป็น staff หรือ superuser"""
-    check = lambda u: u.is_authenticated and (u.is_staff or u.is_superuser)
-    return user_passes_test(check, login_url="admin_login")(view_func)
+    """Decorator ที่เช็คว่าผู้ใช้เป็น Admin (staff) หรือไม่"""
+    check = lambda u: u.is_authenticated and u.is_staff
+    return user_passes_test(check, login_url="login")(view_func)
 
-
-# ---------- Public pages ----------
+# ---------- หน้าเว็บสำหรับทุกคน ----------
 def home(request):
-    return render(request, "home/home.html")
+    """หน้าแรก แสดงสูตรอาหารทั้งหมด"""
+    recipes = Recipe.objects.all().order_by('-created_at')
+    context = {'recipes': recipes}
+    return render(request, "home/home.html", context)
 
-
+# ---------- ระบบสมาชิก (Auth) ----------
 def register(request):
-    User = get_user_model()
+    """ฟังก์ชันสำหรับหน้าสมัครสมาชิก"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password1')
+        password2 = request.POST.get('password2')
 
-    if request.method == "POST":
-        username = (request.POST.get("username") or "").strip()
-        email = (request.POST.get("email") or "").strip()
-        password1 = request.POST.get("password1") or ""
-        password2 = request.POST.get("password2") or ""
+        if password != password2:
+            messages.error(request, 'รหัสผ่านที่ยืนยันไม่ตรงกัน!')
+            return redirect('register')
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f'ชื่อผู้ใช้ "{username}" ถูกใช้งานแล้ว!')
+            return redirect('register')
+        if User.objects.filter(email=email).exists():
+            messages.error(request, f'อีเมล "{email}" นี้ถูกใช้งานแล้ว!')
+            return redirect('register')
 
-        if password1 != password2:
-            messages.error(request, "รหัสผ่านไม่ตรงกัน")
-        elif User.objects.filter(username=username).exists():
-            messages.error(request, "ชื่อผู้ใช้นี้มีอยู่แล้ว")
-        elif email and User.objects.filter(email__iexact=email).exists():
-            messages.error(request, "อีเมลนี้มีอยู่แล้ว")
-        else:
-            user = User.objects.create_user(username=username, email=email, password=password1)
-            messages.success(request, "สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ")
-            return redirect("login")
-
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+        messages.success(request, 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ')
+        return redirect('login')
     return render(request, "home/register.html")
 
-
 def login_view(request):
-    """
-    ล็อกอินผู้ใช้ทั่วไป: ยอมรับทั้ง 'อีเมล' หรือ 'username'
-    """
-    if request.method == "POST":
-        uname_input = request.POST.get("username")
-        password = request.POST.get("password")
-        username = _username_from_input(uname_input)
+    """ฟังก์ชันสำหรับหน้า Login (จัดการทั้ง Admin และ User)"""
+    if request.method == 'POST':
+        user_input = request.POST.get("username")
+        passw = request.POST.get("password")
+        
+        username = user_input
+        if "@" in user_input:
+             try:
+                username = User.objects.get(email__iexact=user_input).username
+             except User.DoesNotExist:
+                pass
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=passw)
+
         if user is not None:
             login(request, user)
-            next_url = request.GET.get("next") or request.POST.get("next") or "home"
-            return redirect(next_url)
-        messages.error(request, "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
-
+            if user.is_staff: # is_staff เช็คว่าเป็น Admin หรือไม่
+                return redirect('admin_recipes')
+            else:
+                return redirect('home')
+        else:
+            messages.error(request, 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!')
+            return redirect('login')
+            
     return render(request, "home/login.html")
 
-
-# ---------- Admin dashboard (custom) ----------
-def admin_login(request):
-    """
-    ล็อกอินแดชบอร์ดของระบบเอง (ไม่ใช่ Django admin)
-    ยอมรับทั้งอีเมล/username และบังคับสิทธิ์ staff/superuser
-    """
-    if request.method == "POST":
-        uname_input = request.POST.get("username")
-        password = request.POST.get("password")
-        username = _username_from_input(uname_input)
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None and (user.is_staff or user.is_superuser):
-            login(request, user)
-            next_url = request.GET.get("next") or request.POST.get("next") or "admin_recipes"
-            return redirect(next_url)
-
-        messages.error(request, "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง หรือไม่มีสิทธิ์เป็นแอดมิน")
-
-    return render(request, "home/admin_login.html")
-
-
-def admin_logout(request):
+def logout_view(request):
+    """ฟังก์ชันสำหรับ Logout"""
     logout(request)
-    return redirect("admin_login")
+    messages.success(request, 'ออกจากระบบเรียบร้อยแล้ว')
+    return redirect('home')
 
-
-@admin_required
-def admin_recipes(request):
-    recipes = Recipe.objects.all()
-    return render(request, "home/admin_recipes.html", {"recipes": recipes})
-
-
-@admin_required
-def add_recipe(request):
+# ---------- ฟังก์ชันสำหรับสมาชิกที่ Login แล้ว ----------
+@login_required(login_url='login')
+def user_add_recipe(request):
+    """ฟังก์ชันสำหรับให้ User ทั่วไปเพิ่มสูตรอาหาร"""
     if request.method == "POST":
         name = request.POST.get("name")
-        category = request.POST.get("category")
+        category_id = request.POST.get("category")
         ingredients = request.POST.get("ingredients")
         instructions = request.POST.get("instructions")
         image = request.FILES.get("image")
 
-        recipe = Recipe(name=name, category=category, ingredients=ingredients, instructions=instructions)
+        category = get_object_or_404(Category, id=category_id)
+
+        recipe = Recipe(
+            name=name,
+            category=category,
+            ingredients=ingredients,
+            instructions=instructions,
+            creator=request.user # กำหนดให้ตัวเองเป็นผู้สร้าง
+        )
         if image:
             recipe.image = image
         recipe.save()
-        messages.success(request, "บันทึกเมนูแล้ว")
-        return redirect("admin_recipes")
+        messages.success(request, "เพิ่มสูตรอาหารของคุณเรียบร้อยแล้ว!")
+        return redirect("home")
 
-    return render(request, "home/recipe_form.html", {"title": "เพิ่มเมนูอาหาร", "recipe": {}})
+    # เตรียมข้อมูล Category สำหรับ Dropdown ในฟอร์ม
+    categories = Category.objects.all()
+    return render(request, "home/recipe_form.html", {"title": "เพิ่มสูตรอาหารใหม่", "categories": categories})
 
+
+# ---------- ส่วนจัดการของ Admin ----------
+@admin_required
+def admin_recipes(request):
+    """หน้าแสดงรายการอาหารทั้งหมดสำหรับ Admin"""
+    all_recipes = Recipe.objects.all().order_by('-created_at')
+    recipe_count = all_recipes.count()
+    context = {'recipes': all_recipes, 'recipe_count': recipe_count}
+    return render(request, "home/admin_recipes.html", context)
 
 @admin_required
 def edit_recipe(request, recipe_id):
+    """ฟังก์ชันสำหรับให้ Admin แก้ไขสูตรอาหารของทุกคน"""
     recipe = get_object_or_404(Recipe, pk=recipe_id)
-
     if request.method == "POST":
         recipe.name = request.POST.get("name")
-        recipe.category = request.POST.get("category")
+        category_id = request.POST.get("category")
         recipe.ingredients = request.POST.get("ingredients")
         recipe.instructions = request.POST.get("instructions")
         image = request.FILES.get("image")
+
+        recipe.category = get_object_or_404(Category, id=category_id)
+        
         if image:
             recipe.image = image
         recipe.save()
-        messages.success(request, "แก้ไขเมนูแล้ว")
+        messages.success(request, "แก้ไขเมนูเรียบร้อยแล้ว")
         return redirect("admin_recipes")
 
-    return render(request, "home/recipe_form.html", {"title": "แก้ไขเมนูอาหาร", "recipe": recipe})
-
+    categories = Category.objects.all()
+    return render(request, "home/recipe_form.html", {"title": "แก้ไขเมนูอาหาร", "recipe": recipe, "categories": categories})
 
 @admin_required
 def delete_recipe(request, recipe_id):
+    """ฟังก์ชันสำหรับให้ Admin ลบสูตรอาหารของทุกคน"""
     recipe = get_object_or_404(Recipe, pk=recipe_id)
+    recipe_name = recipe.name
     recipe.delete()
-    messages.success(request, "ลบเมนูแล้ว")
+    messages.success(request, f'ลบเมนู "{recipe_name}" เรียบร้อยแล้ว')
     return redirect("admin_recipes")
+
+# หมายเหตุ: ฟังก์ชัน add_recipe ของ Admin จะใช้ร่วมกับของ User ได้เลย
+# เราจึงสร้าง URL ให้ชี้ไปที่ user_add_recipe ได้
+# แต่ถ้าต้องการ Logic แยก ก็สามารถสร้างฟังก์ชันใหม่ได้
+@admin_required
+def add_recipe(request):
+    """ฟอร์มเพิ่มสูตรอาหารสำหรับ Admin (ใช้ฟอร์มเดียวกับ User)"""
+    return user_add_recipe(request)
